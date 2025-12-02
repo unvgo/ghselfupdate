@@ -1,11 +1,10 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"context"
 	"strings"
 	"testing"
 )
-
 
 func TestCompileRegexForFiltering(t *testing.T) {
 	filters := []string{

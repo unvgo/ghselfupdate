@@ -1,4 +1,4 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"archive/tar"
@@ -7,6 +7,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"path/filepath"
 	"runtime"
 	"strings"

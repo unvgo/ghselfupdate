@@ -1,9 +1,10 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"

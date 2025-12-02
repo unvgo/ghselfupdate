@@ -1,4 +1,4 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"testing"

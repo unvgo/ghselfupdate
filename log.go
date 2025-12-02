@@ -1,4 +1,4 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"io"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var log = stdlog.New(io.Discard, "", 0)
+var logger = stdlog.New(io.Discard, "", 0)
 var logEnabled = false
 
 // EnableLog enables to output logging messages in library
@@ -15,8 +15,8 @@ func EnableLog() {
 		return
 	}
 	logEnabled = true
-	log.SetOutput(os.Stderr)
-	log.SetFlags(stdlog.Ltime)
+	logger.SetOutput(os.Stderr)
+	logger.SetFlags(stdlog.Ltime)
 }
 
 // DisableLog disables to output logging messages in library
@@ -25,6 +25,6 @@ func DisableLog() {
 		return
 	}
 	logEnabled = false
-	log.SetOutput(io.Discard)
-	log.SetFlags(0)
+	logger.SetOutput(io.Discard)
+	logger.SetFlags(0)
 }

@@ -1,7 +1,8 @@
-package selfupdate
+package ghselfupdate
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"runtime"
 	"strings"

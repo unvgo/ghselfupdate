@@ -1,4 +1,4 @@
-module github.com/krau/go-github-selfupdate
+module github.com/unvgo/ghselfupdate
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
