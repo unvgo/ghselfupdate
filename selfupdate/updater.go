@@ -4,12 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"regexp"
 
 	"github.com/google/go-github/v30/github"
-	gitconfig "github.com/tcnksm/go-gitconfig"
-	"golang.org/x/oauth2"
 )
 
 // Updater is responsible for managing the context of self-update.
@@ -23,8 +20,6 @@ type Updater struct {
 
 // Config represents the configuration of self-update.
 type Config struct {
-	// APIToken represents GitHub API token. If it's not empty, it will be used for authentication of GitHub API
-	APIToken string
 	// EnterpriseBaseURL is a base URL of GitHub API. If you want to use this library with GitHub Enterprise,
 	// please set "https://{your-organization-address}/api/v3/" to this field.
 	EnterpriseBaseURL string
@@ -37,40 +32,24 @@ type Config struct {
 	// An asset is selected if it matches any of those, in addition to the regular tag, os, arch, extensions.
 	// Please make sure that your filter(s) uniquely match an asset.
 	Filters []string
-}
-
-func newHTTPClient(ctx context.Context, token string) *http.Client {
-	if token == "" {
-		return http.DefaultClient
-	}
-	src := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	return oauth2.NewClient(ctx, src)
+	// HTTPClient allows to set a custom http.Client for GitHub API requests. If nil, a default client will be used.
+	HTTPClient *http.Client
 }
 
 // NewUpdater creates a new updater instance. It initializes GitHub API client.
 // If you set your API token to $GITHUB_TOKEN, the client will use it.
-func NewUpdater(config Config) (*Updater, error) {
-	token := config.APIToken
-	if token == "" {
-		token = os.Getenv("GITHUB_TOKEN")
-	}
-	if token == "" {
-		token, _ = gitconfig.GithubToken()
-	}
-	ctx := context.Background()
-	hc := newHTTPClient(ctx, token)
-
+func NewUpdater(ctx context.Context, config Config) (*Updater, error) {
 	filtersRe := make([]*regexp.Regexp, 0, len(config.Filters))
 	for _, filter := range config.Filters {
 		re, err := regexp.Compile(filter)
 		if err != nil {
-			return nil, fmt.Errorf("Could not compile regular expression %q for filtering releases: %v", filter, err)
+			return nil, fmt.Errorf("could not compile regular expression %q for filtering releases: %v", filter, err)
 		}
 		filtersRe = append(filtersRe, re)
 	}
 
 	if config.EnterpriseBaseURL == "" {
-		client := github.NewClient(hc)
+		client := github.NewClient(config.HTTPClient)
 		return &Updater{api: client, apiCtx: ctx, validator: config.Validator, filters: filtersRe}, nil
 	}
 
@@ -78,7 +57,7 @@ func NewUpdater(config Config) (*Updater, error) {
 	if u == "" {
 		u = config.EnterpriseBaseURL
 	}
-	client, err := github.NewEnterpriseClient(config.EnterpriseBaseURL, u, hc)
+	client, err := github.NewEnterpriseClient(config.EnterpriseBaseURL, u, config.HTTPClient)
 	if err != nil {
 		return nil, err
 	}
@@ -89,11 +68,6 @@ func NewUpdater(config Config) (*Updater, error) {
 // It initializes GitHub API client with default API base URL.
 // If you set your API token to $GITHUB_TOKEN, the client will use it.
 func DefaultUpdater() *Updater {
-	token := os.Getenv("GITHUB_TOKEN")
-	if token == "" {
-		token, _ = gitconfig.GithubToken()
-	}
 	ctx := context.Background()
-	client := newHTTPClient(ctx, token)
-	return &Updater{api: github.NewClient(client), apiCtx: ctx}
+	return &Updater{api: github.NewClient(http.DefaultClient), apiCtx: ctx}
 }

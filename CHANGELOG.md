@@ -1,3 +1,9 @@
+## [v2.0.0] - 2025-12-02
+
+- Delete APIToken related code because it is not needed for public repositories.
+- Add HTTPClient option to Updater config struct to allow custom HTTP clients (e.g., with proxy settings).
+- Add context.Context parameters to NewUpdater method to support request cancellation and timeouts.
+
 ## [v1.2.3] - 2021-01-13
 
 - Fix security issues in dependencies; CVE-2020-16845, CVE-2019-11840, CVE-2020-14040 (Thanks to [@bhamail](https://github.com/bhamail)).

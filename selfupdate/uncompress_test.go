@@ -2,7 +2,7 @@ package selfupdate
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,7 +16,7 @@ func TestCompressionNotRequired(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	have, err := ioutil.ReadAll(r)
+	have, err := io.ReadAll(r)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestUncompress(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			bytes, err := ioutil.ReadAll(r)
+			bytes, err := io.ReadAll(r)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -79,12 +79,12 @@ func TestUncompressInvalidArchive(t *testing.T) {
 		msg  string
 	}{
 		{"testdata/invalid.zip", "not a valid zip file"},
-		{"testdata/invalid.gz", "Failed to uncompress gzip file"},
-		{"testdata/invalid-tar.tar.gz", "Failed to unarchive .tar file"},
-		{"testdata/invalid-gzip.tar.gz", "Failed to uncompress .tar.gz file"},
-		{"testdata/invalid.xz", "Failed to uncompress xzip file"},
-		{"testdata/invalid-tar.tar.xz", "Failed to unarchive .tar file"},
-		{"testdata/invalid-xz.tar.xz", "Failed to uncompress .tar.xz file"},
+		{"testdata/invalid.gz", "failed to uncompress gzip file"},
+		{"testdata/invalid-tar.tar.gz", "failed to unarchive .tar file"},
+		{"testdata/invalid-gzip.tar.gz", "failed to uncompress .tar.gz file"},
+		{"testdata/invalid.xz", "failed to uncompress xzip file"},
+		{"testdata/invalid-tar.tar.xz", "failed to unarchive .tar file"},
+		{"testdata/invalid-xz.tar.xz", "failed to uncompress .tar.xz file"},
 	} {
 		f, err := os.Open(a.name)
 		if err != nil {

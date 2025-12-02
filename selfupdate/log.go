@@ -1,12 +1,12 @@
 package selfupdate
 
 import (
-	"io/ioutil"
+	"io"
 	stdlog "log"
 	"os"
 )
 
-var log = stdlog.New(ioutil.Discard, "", 0)
+var log = stdlog.New(io.Discard, "", 0)
 var logEnabled = false
 
 // EnableLog enables to output logging messages in library
@@ -25,6 +25,6 @@ func DisableLog() {
 		return
 	}
 	logEnabled = false
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	log.SetFlags(0)
 }
